@@ -43,19 +43,42 @@ public:
 };
 
 
-int main() {
-	RandomNumber rn(19890929);
-	int dis[10] = {0};
+void comparePRNG(uint64_t myseed, int count){
+	RandomNumber rn(myseed);
+	int myDis[10] = {0};
+	int cppDis[10] = {0};
 	double rv;
 
+	// C++ standard random number generator
+	std::random_device rd;  //Will be used to obtain a seed for the random number engine
+	std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
+	std::uniform_real_distribution<> d(0.0, 1.0);
 
-	for (int i = 0; i < 100; i++){
+	for (int i = 0; i < count; i++){
 		rv = rn.ranUni();
-		dis[static_cast<int>(rv*10)]++;
-//		std::cout << rn.ranUni() << std::endl;
+		myDis[static_cast<int>(rv*10)]++;
+		rv = d(gen);
+		cppDis[static_cast<int>(rv*10)]++;
 	}
-	for (int d : dis)
-		std::cout << d << ", ";
+	std::cout << "My PRNG distribution from 0.0 to 0.9" << std::endl;
+	for (int i = 0; i < 10; i++)
+		std::cout << "." << i << "\t";
 	std::cout << "\n";
+	for (int i = 0; i < 10; i++)
+		std::cout << myDis[i] << "\t";
+	std::cout << "\n\n";
+
+	std::cout << "C++ PRNG distribution from 0.0 to 0.9" << std::endl;
+	for (int i = 0; i < 10; i++)
+		std::cout << "." << i << "\t";
+	std::cout << "\n";
+	for (int i = 0; i < 10; i++)
+		std::cout << cppDis[i] << "\t";
+	std::cout << "\n";
+}
+
+int main() {
+//	comparePRNG(19890929, 10000);
+
 	return 0;
 }
