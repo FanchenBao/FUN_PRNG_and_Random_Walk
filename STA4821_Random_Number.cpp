@@ -6,9 +6,13 @@
 // Description : Hello World in C++, Ansi-style
 //============================================================================
 
+#define _USE_MATH_DEFINES
+
 #include <iostream>
-#include <utility>
-#include <random>
+#include <utility> // std::pair<>
+#include <random> // for comparison with C++ PRNG
+#include <ctime> // std::time() for seeding purpose
+#include <cmath> // std::log()
 
 class RandomNumber{
 private:
@@ -32,9 +36,12 @@ public:
 		return ((curr % 1000000000000000) / 100000) / 10000000000.0;
 	}
 
-//	std::pair<double, double> ranGau(){ // return the next Gaussian-distributed random number
-//
-//	}
+	std::pair<double, double> ranGau(){ // return the next pair of Gaussian-distributed random number
+		double x1 = ranUni(); // get two uniformly distributed values
+		double x2 = ranUni();
+		// use Box-Muller transform
+		return std::make_pair(std::sqrt(-2 * std::log(x1)) * std::cos(2 * M_PI * x2), std::sqrt(-2 * std::log(x1)) * std::sin(2 * M_PI * x2));
+	}
 //
 //	int ranBin(){ // return the next binary-distributed random number 0 or 1
 //
@@ -77,8 +84,26 @@ void comparePRNG(uint64_t myseed, int count){
 	std::cout << "\n";
 }
 
+
+void outputRanUni(uint64_t myseed, int count){
+	RandomNumber rn(myseed);
+	for (int i = 0; i < count; i++)
+		std::cout << rn.ranUni() << std::endl;
+}
+
+void outputRanGau(uint64_t myseed, int count){
+	RandomNumber rn(myseed);
+	for (int i = 0; i < count; i++){
+		std::pair<double, double> rg = rn.ranGau();
+		std::cout << rg.first << std::endl;
+		std::cout << rg.second << std::endl;
+	}
+}
+
 int main() {
-//	comparePRNG(19890929, 10000);
+//	comparePRNG(std::time(nullptr), 10000);
+//	outputRanUni(std::time(nullptr), 20);
+	outputRanGau(std::time(nullptr), 20);
 
 	return 0;
 }
