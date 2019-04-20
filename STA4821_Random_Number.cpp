@@ -1,9 +1,10 @@
 //============================================================================
 // Name        : STA4821_Random_Number.cpp
 // Author      : Fanchen
-// Version     :
-// Copyright   : Your copyright notice
-// Description : Hello World in C++, Ansi-style
+// Date	       : 04/19/2019
+// Description : Pseudo-Random Number Generator for uniform, Gaussian, and binary
+//				 distribution. The generators are also used to perform a random
+//				 walk simulation
 //============================================================================
 
 #define _USE_MATH_DEFINES
@@ -13,6 +14,7 @@
 #include <random> // for comparison with C++ PRNG
 #include <ctime> // std::time() for seeding purpose
 #include <cmath> // std::log()
+#include <iomanip>      // std::setw
 
 class RandomNumber{
 private:
@@ -42,10 +44,10 @@ public:
 		// use Box-Muller transform
 		return std::make_pair(std::sqrt(-2 * std::log(x1)) * std::cos(2 * M_PI * x2), std::sqrt(-2 * std::log(x1)) * std::sin(2 * M_PI * x2));
 	}
-//
-//	int ranBin(){ // return the next binary-distributed random number 0 or 1
-//
-//	}
+
+	int ranBin(){ // return the next binary-distributed random number 0 or 1
+		return ranUni() >= 0.5 ? 1 : 0;
+	}
 
 };
 
@@ -87,23 +89,46 @@ void comparePRNG(uint64_t myseed, int count){
 
 void outputRanUni(uint64_t myseed, int count){
 	RandomNumber rn(myseed);
+	std::cout << "x" << std::endl;
 	for (int i = 0; i < count; i++)
 		std::cout << rn.ranUni() << std::endl;
 }
 
 void outputRanGau(uint64_t myseed, int count){
 	RandomNumber rn(myseed);
-	for (int i = 0; i < count; i++){
+	std::cout << "\ty1\t\ty2" << std::endl;
+	for (int i = 0; i < count / 2; i++){ // each iteration output two random Gaussian values
 		std::pair<double, double> rg = rn.ranGau();
-		std::cout << rg.first << std::endl;
-		std::cout << rg.second << std::endl;
+		std::cout << std::setw(10) << rg.first << "\t";
+		std::cout << std::setw(10) << rg.second << std::endl;
 	}
 }
 
+void outputRanBin(uint64_t myseed, int count){
+	RandomNumber rn(myseed);
+	std::cout << "Bin 0\tBin1" << std::endl;
+	for (int i = 0; i < count; i++){
+		int bin = rn.ranBin();
+		if (bin)
+			std::cout << "\t1" << std::endl;
+		else
+			std::cout << "0\t" << std::endl;
+	}
+}
+
+class RandomWalk{
+private:
+	int mode; // mode = 0, Uniform distribution
+public:
+	RandomWalk(){} // constructor
+
+};
+
 int main() {
 //	comparePRNG(std::time(nullptr), 10000);
-//	outputRanUni(std::time(nullptr), 20);
+	outputRanUni(std::time(nullptr), 20);
 	outputRanGau(std::time(nullptr), 20);
+	outputRanBin(std::time(nullptr), 20);
 
 	return 0;
 }
