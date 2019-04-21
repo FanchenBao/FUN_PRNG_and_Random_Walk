@@ -14,14 +14,14 @@
 
 void outputRanUni(int count, uint64_t myseed = std::time(nullptr)){
 	RandomNumber rn(myseed);
-	std::cout << "x" << std::endl;
+	std::cout << "Uniform-distributed Random Numbers\nx" << std::endl;
 	for (int i = 0; i < count; i++)
 		std::cout << rn.ranUni() << std::endl;
 }
 
 void outputRanGau(int count, uint64_t myseed = std::time(nullptr)){
 	RandomNumber rn(myseed);
-	std::cout << "\ty1\t\ty2" << std::endl;
+	std::cout << "Gaussian-distributed Random Numbers\n\ty1\t\ty2" << std::endl;
 	for (int i = 0; i < count / 2; i++){ // each iteration output two random Gaussian values
 		std::pair<double, double> rg = rn.ranGau();
 		std::cout << std::setw(10) << rg.first << "\t";
@@ -31,7 +31,7 @@ void outputRanGau(int count, uint64_t myseed = std::time(nullptr)){
 
 void outputRanBin(int count, uint64_t myseed = std::time(nullptr)){
 	RandomNumber rn(myseed);
-	std::cout << "Bin 0\tBin1" << std::endl;
+	std::cout << "Binomial-distributed Random Numbers\nBin0\tBin1" << std::endl;
 	for (int i = 0; i < count; i++){
 		int bin = rn.ranBin();
 		if (bin)

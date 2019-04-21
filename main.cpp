@@ -115,12 +115,15 @@ void plotRandomWalk(std::vector<std::vector<double> > coord, RandomWalk &rw){
 
 int main() {
 //	comparePRNG(10000);
-//	outputRanUni(20);
-//	outputRanGau(20);
-//	outputRanBin(20);
-	RandomWalk rw(0);
-	std::vector<std::vector<double> > coord = rw.walk();
-	plotRandomWalk(coord, rw);
+	outputRanUni(20);
+	std::cout << "\n";
+	outputRanGau(20);
+	std::cout << "\n";
+	outputRanBin(20);
+	std::cout << "\n";
+//	RandomWalk rw(0);
+//	std::vector<std::vector<double> > coord = rw.walk();
+//	plotRandomWalk(coord, rw);
 //	outputRandomWalk(coord);
 
 

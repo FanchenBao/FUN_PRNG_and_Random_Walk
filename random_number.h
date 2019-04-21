@@ -21,7 +21,7 @@ private:
 public:
 	RandomNumber(uint64_t seed = std::time(nullptr)) : curr(seed){} // constructor, set curr value. default seed is current time
 
-	double ranUni(){ // return the next uniform-distributed random number between 0 (inclusive) and 1 (exclusive)
+	double ranUni(){ // return the next uniform-distributed random number between 0 (exclusive) and 1 (exclusive)
 		curr *= curr;
 
 		/* Inspired by "Middle Square Weyl Sequence PRNG" described in
@@ -44,7 +44,7 @@ public:
 		return std::make_pair(std::sqrt(-2 * std::log(x1)) * std::cos(2 * M_PI * x2), std::sqrt(-2 * std::log(x1)) * std::sin(2 * M_PI * x2));
 	}
 
-	int ranBin() {return ranUni() >= 0.5 ? 1 : 0;} // return the next binary-distributed random number 0 or 1
+	int ranBin() {return ranUni() >= 0.5 ? 1 : 0;} // return the next binomial-distributed random number 0 or 1
 };
 
 
