@@ -136,6 +136,11 @@ private:
 	// destination coordinates
 	double desX;
 	double desY;
+
+	// starting point coordinates
+	double staX;
+	double staY;
+
 	RandomNumber rn;
 
 	bool inBoundary(double x, double y){ // check whether the location is within or out of bound
@@ -147,18 +152,18 @@ private:
 		return (std::abs(x - desX) >= error || std::abs(y - desY) >= error) ? false : true;
 	}
 
-	void randomPickStart(double &sx, double &sy){
+	void randomPickStart(){
 		switch(mode){
 		case 0: // use Uniform distribution
-			sx = (rn.ranUni()) * mapW - maxX; // make sure minX <= sx <= maxX
-			sy = (rn.ranUni()) * mapH - maxY; // make sure minY <= sy <= maxY
+			staX = (rn.ranUni()) * mapW - maxX; // make sure minX <= sx <= maxX
+			staY = (rn.ranUni()) * mapH - maxY; // make sure minY <= sy <= maxY
 			break;
 		case 1: // use Gaussain distribution
 			while(true){
 				std::pair<double, double> rv = rn.ranGau();
 				if (std::abs(rv.first) < maxX && std::abs(rv.second) < maxY){ // choose the first Gaussian rv pair that are within the map boundary
-					sx = rv.first;
-					sy = rv.second;
+					staX = rv.first;
+					staY = rv.second;
 					break;
 				}
 			}
@@ -200,23 +205,23 @@ private:
 
 
 public:
-	RandomWalk(int m, uint64_t seed = std::time(nullptr), double width = 4.0, double height = 4.0, double dx = 0.0, double dy = 0.0) :
+	RandomWalk(int m, uint64_t seed = std::time(nullptr)) :
 		mode(m),
-		maxX(width / 2.0), minX(0 - width / 2.0),
-		maxY(height / 2.0), minY(0 - height / 2.0),
-		mapW(width), mapH(height),
-		desX(dx), desY(dy), rn(seed){} // constructor. The map default will be centered on (0, 0) with width and height being 4.
+		maxX(2.0), minX(-2.0),
+		maxY(2.0), minY(-2.0),
+		mapW(4.0), mapH(4.0),
+		desX(0.0), desY(0.0), rn(seed){randomPickStart();} // constructor.
+	//The map default will be centered on (0, 0) with width and height being 4.
+	// Default destination is (0, 0); default starting point is randomly selected
 
-	std::vector<std::vector<double> > walk(int steps = 100, double sx = 0, double sy = 0){ // default randwom walk 100 steps, with random starting position
+	std::vector<std::vector<double> > walk(int steps = 100){ // default randwom walk 100 steps
 		std::vector<std::vector<double> > res; // an array of two arrays, res[0] for x coordinates, res[1] for y coordinates.
 		res.emplace_back(std::vector<double>());
 		res.emplace_back(std::vector<double>());
 
-		if (sx == 0 && sy == 0) // determine starting position
-			randomPickStart(sx, sy);
 		// push starting positions to res
-		res[0].push_back(sx);
-		res[1].push_back(sy);
+		res[0].push_back(staX);
+		res[1].push_back(staY);
 
 		for (int i = 0; i < steps; i++){
 			double newX, newY;
@@ -249,9 +254,20 @@ public:
 		return res;
 	}
 
+	// getters
 	std::pair<double, double> getXRange(){return std::make_pair(minX, maxX);}
 	std::pair<double, double> getYRange(){return std::make_pair(minY, maxY);}
 	std::pair<double, double> getDes(){return std::make_pair(desX, desY);}
+	std::pair<double, double> getStart(){return std::make_pair(staX, staY);}
+
+	// setters
+	void setDim(double w, double h){ // set map's width and height.
+		mapW = w; mapH = h;
+		maxX = w / 2.0; minX = 0 - maxX;
+		maxY = h / 2.0; minY = 0 - maxY;
+	}
+	void setStart(double x, double y) {staX = x; staY = y;} // set custom starting point
+	void setDes(double x, double y) {desX = x; desY = y;} // set custom destination point
 };
 
 
@@ -259,8 +275,7 @@ void plotRandomWalk(std::vector<std::vector<double> > coord, RandomWalk &rw){
 	std::pair<double, double> xrange = rw.getXRange();
 	std::pair<double, double> yrange = rw.getYRange();
 	std::pair<double, double> des = rw.getDes();
-
-	plt::figure_size(780, 780);
+	std::pair<double, double> sta = rw.getStart();
 
 	std::map<std::string, std::string> keywords;
 	keywords["linewidth"] = "0.5";
@@ -269,12 +284,14 @@ void plotRandomWalk(std::vector<std::vector<double> > coord, RandomWalk &rw){
 	keywords["markerfacecolor"] = "b";
 	plt::plot(coord[0], coord[1], keywords);
 
+
+
 	plt::plot({xrange.first, xrange.second}, {0, 0}, "k-"); // x axis
 	plt::plot({0, 0}, {yrange.first, yrange.second}, "k-"); // y axis
 
-	plt::plot({des.first},{des.second}, "g*"); // destination point
-	plt::plot({}, {}, "ro"); // starting point
-	plt::plot({}, {}, "kX"); // last step point
+	plt::plot({des.first},{des.second}, "gD"); // destination point
+	plt::plot({sta.first}, {sta.second}, "ro"); // starting point
+	plt::plot({*coord[0].rbegin()}, {*coord[1].rbegin()}, "kX"); // last step point
 
 	// set x and y axis limit
 	plt::xlim(xrange.first, xrange.second);
@@ -283,6 +300,14 @@ void plotRandomWalk(std::vector<std::vector<double> > coord, RandomWalk &rw){
 	plt::show();
 }
 
+void outputRandomWalk(std::vector<std::vector<double> > &coord){
+	std::cout << "x\ty" << std::endl;
+	std::cout << std::fixed;
+	std::cout << std::setprecision(3);
+	for (size_t i = 0; i < coord[0].size(); i++){
+		std::cout << coord[0][i] << "\t" << coord[1][i] << std::endl;
+	}
+}
 
 int main() {
 //	comparePRNG(10000);
@@ -292,6 +317,7 @@ int main() {
 	RandomWalk rw(0);
 	std::vector<std::vector<double> > coord = rw.walk();
 	plotRandomWalk(coord, rw);
+//	outputRandomWalk(coord);
 
 
 
