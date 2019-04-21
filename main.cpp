@@ -17,6 +17,7 @@
 #include <iomanip>   // std::setw
 #include <vector>
 #include "matplotlibcpp.h"
+#include <string>
 
 namespace plt = matplotlibcpp;
 
@@ -277,21 +278,50 @@ void plotRandomWalk(std::vector<std::vector<double> > coord, RandomWalk &rw){
 	std::pair<double, double> des = rw.getDes();
 	std::pair<double, double> sta = rw.getStart();
 
-	std::map<std::string, std::string> keywords;
-	keywords["linewidth"] = "0.5";
-	keywords["linestyle"] = "-";
-	keywords["marker"] = ".";
-	keywords["markerfacecolor"] = "b";
-	plt::plot(coord[0], coord[1], keywords);
+	std::vector<std::string> colors = {"g", "r", "b", "c", "m", "y"}; // color choices for each step
+	std::map<std::string, std::string> kw; // plot param for the actual walk
+	kw["markersize"] = "5";
+	kw["linestyle"] = "-";
+	kw["linewidth"] = "0.5";
 
+	for (size_t i = 1; i < coord[0].size(); i++){
+		kw["color"] = colors[i % 6]; // make sure each step has a different color.
+		if (coord[0][i] > coord[0][i - 1]) {kw["marker"] = ">";} // go right
+		else if (coord[0][i] < coord[0][i - 1]) {kw["marker"] = "<";} // go left
+		else{
+			if (coord[1][i] > coord[1][i - 1]) {kw["marker"] = "^";} // go up
+			else if (coord[1][i] < coord[1][i - 1]) {kw["marker"] = "v";} // go down
+		}
+		plt::plot({coord[0][i]},{coord[1][i]}, kw); // plot the arrow
+		kw["marker"] = "";
+		plt::plot({coord[0][i-1], coord[0][i]},{coord[1][i-1], coord[1][i]}, kw); // plot the line
 
+	}
 
 	plt::plot({xrange.first, xrange.second}, {0, 0}, "k-"); // x axis
 	plt::plot({0, 0}, {yrange.first, yrange.second}, "k-"); // y axis
 
-	plt::plot({des.first},{des.second}, "gD"); // destination point
-	plt::plot({sta.first}, {sta.second}, "ro"); // starting point
-	plt::plot({*coord[0].rbegin()}, {*coord[1].rbegin()}, "kX"); // last step point
+	std::map<std::string, std::string> keywords; // plot param for the legends
+	keywords["marker"] = "D";
+	keywords["markerfacecolor"] = "g";
+	keywords["markeredgecolor"] = "g";
+	keywords["markersize"] = "8";
+	keywords["label"] = "Destination";
+	keywords["linestyle"] = "";
+	plt::plot({des.first},{des.second}, keywords); // destination point
+
+	keywords["marker"] = "o";
+	keywords["markerfacecolor"] = "r";
+	keywords["markeredgecolor"] = "r";
+	keywords["label"] = "Start";
+	plt::plot({sta.first}, {sta.second}, keywords); // starting point
+
+	keywords["marker"] = "X";
+	keywords["markerfacecolor"] = "k";
+	keywords["markeredgecolor"] = "k";
+	keywords["label"] = "End";
+	plt::plot({*coord[0].rbegin()}, {*coord[1].rbegin()}, keywords); // last step point
+	plt::legend();
 
 	// set x and y axis limit
 	plt::xlim(xrange.first, xrange.second);
