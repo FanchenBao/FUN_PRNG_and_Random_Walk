@@ -157,4 +157,4 @@ int main{
   return 0;
 }
 ```
-![Random walk based on uniform-distributed random numbers](https://github.com/FanchenBao/FUN_PRNG_and_Random_Walk/images/random_walk_demo_uniform.png)
+![Random walk based on uniform-distributed random numbers](https://github.com/FanchenBao/FUN_PRNG_and_Random_Walk/blob/master/images/random_walk_demo_uniform.png)
