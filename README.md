@@ -48,7 +48,7 @@ This project includes a ```RandomNumber``` class, which, upon seeding, can produ
 
 2. ```void outputRanGau(int count, uint64_t myseed)```
 
-   Print out ```count``` number of Gaussian-distributed random numbers.
+   Print out ```count``` number of Gaussian-distributed random numbers. Note that since each time `ranGau()` is called, a pair of independent Gaussian-distributed random numbers are generated, the output is also in pairs. But there is no connection between the numbers within each pair.
 
 3. ```void outputRanBin(int count, uint64_t myseed)```
 
