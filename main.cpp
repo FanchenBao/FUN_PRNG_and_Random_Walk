@@ -54,7 +54,7 @@ void comparePRNG(int count, uint64_t myseed = std::time(nullptr)){
 }
 
 
-void plotRandomWalk(std::vector<std::vector<double> > coord, RandomWalk &rw){
+void plotRandomWalk(std::vector<std::vector<double> > coord, RandomWalk &rw, int disMode){
 	std::pair<double, double> xrange = rw.getXRange();
 	std::pair<double, double> yrange = rw.getYRange();
 	std::pair<double, double> des = rw.getDes();
@@ -109,22 +109,29 @@ void plotRandomWalk(std::vector<std::vector<double> > coord, RandomWalk &rw){
 	plt::xlim(xrange.first, xrange.second);
 	plt::ylim(yrange.first, yrange.second);
 
+	// set plot title
+	if (disMode)
+		plt::title("Random Walk With Gaussian-distributed Random Step Distance");
+	else
+		plt::title("Random Walk With Uniform-distributed Random Step Distance");
+
 	plt::show();
 }
 
 
 int main() {
 //	comparePRNG(10000);
-	outputRanUni(20);
-	std::cout << "\n";
-	outputRanGau(20);
-	std::cout << "\n";
-	outputRanBin(20);
-	std::cout << "\n";
-//	RandomWalk rw(0);
-//	std::vector<std::vector<double> > coord = rw.walk();
-//	plotRandomWalk(coord, rw);
-//	outputRandomWalk(coord);
+//	outputRanUni(20);
+//	std::cout << "\n";
+//	outputRanGau(20);
+//	std::cout << "\n";
+//	outputRanBin(20);
+//	std::cout << "\n";
+	int disMode = 1; // 1 = Gaussian, 0 = uniform
+	RandomWalk rw(disMode);
+	std::vector<std::vector<double> > coord = rw.walk();
+	plotRandomWalk(coord, rw, disMode);
+	outputRandomWalk(coord);
 
 
 	return 0;
