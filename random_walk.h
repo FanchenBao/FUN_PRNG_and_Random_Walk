@@ -8,6 +8,7 @@
 #ifndef RANDOM_WALK_H_
 #define RANDOM_WALK_H_
 
+#include <vector>
 #include "random_number.h"
 
 class RandomWalk{
