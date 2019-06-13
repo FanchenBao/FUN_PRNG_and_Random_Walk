@@ -64,6 +64,10 @@ This project includes a ```RandomNumber``` class, which, upon seeding, can produ
 
 ## Usage and Examples
 ### Compilation
+**Issue (06/13/2019)**  
+For whatever reason, the command shown below no longer worked for compilation. It reported "fatal error: 'numpy/arrayobject.h' file not found". If I supplied numpy's header file directory (acquired from python script: import numpy numpy.get_include()), the error went away, but no figure was generated. I tested with sample code provided by matplotlib-cpp, still no figure generation. I already checked the .matplotlib/matplotlibrc file and its backend was at "TkAgg". Running matplotlib and numpy from python's end worked. I have no idea how to fix this for now.
+
+**Original Compilation Method**  
 Follow the usage guidelines described in [matplotlibcpp](https://github.com/lava/matplotlib-cpp) to include and link to Python for plotting purpose. If the steps described there don't work for your system, you can use Homebrew to install (or reinstall) Python, use ```pip``` to install matplotlib and numpy, and run the following bash script to compile the C++ code (`$(python3-config --cflags)` handles the inclusion of header files in Python; `$(python3-config --ldflags)` handles linker to Python).
 ```bash
 g++ main.cpp -o main.out $(python3-config --cflags) $(python3-config --ldflags) -std=c++11
